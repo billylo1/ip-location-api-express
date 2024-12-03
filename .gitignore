@@ -13,3 +13,8 @@ node_modules
 /browser/geocode-extra/4
 /browser/geocode-extra/6
 /browser/geocode-extra/*.idx
+package-lock.json
+browser/country/package-lock.json
+browser/country-extra/package-lock.json
+browser/geocode/package-lock.json
+browser/geocode-extra/package-lock.json

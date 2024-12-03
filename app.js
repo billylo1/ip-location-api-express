@@ -3,6 +3,9 @@ import { lookup, reload } from 'ip-location-api';
 
 const app = express();
 const PORT = 8087;
+import 'dotenv/config'
+
+const GOOGLE_MAPS_API_KEY=process.env.GOOGLE_MAPS_API_KEY ;
 
 app.use((req, res, next) => {
     const { method, url } = req;
@@ -44,10 +47,10 @@ app.get('/api/location/:ip', async (req, res) => {
 
 app.listen(PORT, async () => {
     console.log(`Server is running on http://0.0.0.0:${PORT}`);
+    console.log(GOOGLE_MAPS_API_KEY);
     await reload({fields: 'latitude,longitude,country,country_name,region1_name,city'});
 });
 
-const GOOGLE_MAPS_API_KEY="AIzaSyBAUG2bVy2pwNOnFxlji8Hb6oN5QRZFXLU";
 
 async function getCity(lat, lng) {
 

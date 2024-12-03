@@ -18,3 +18,4 @@ browser/country/package-lock.json
 browser/country-extra/package-lock.json
 browser/geocode/package-lock.json
 browser/geocode-extra/package-lock.json
+.env

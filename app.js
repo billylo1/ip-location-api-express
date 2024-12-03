@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { response } from 'express';
 import { lookup, reload } from 'ip-location-api';
 
 const app = express();
@@ -20,39 +20,55 @@ app.use((req, res, next) => {
 });
 
 app.get('/api/location/:ip', async (req, res) => {
+
+    var startTime = new Date();
+    var responseJson = {};
     const ip = req.params.ip;
     try {
         const location = await lookup(ip);
+        console.log(JSON.stringify(location, null, 2));
         if (location.city == undefined) {
             location.city = await getCity(location.latitude, location.longitude);
         }
-        res.json(location);
+        responseJson = location;
     } catch (error) {
         console.error('Error fetching location:', error);
-        res.status(500).json({ error: 'Error fetching location' });
+        responseJson = { error: 'Error fetching location' };
+    } finally {
+        var endTime = new Date();
+        var responseTime = endTime - startTime;
+        responseJson.responseTimeMs = responseTime;
+        res.json(responseJson);
     }
 });
 
 app.listen(PORT, async () => {
     console.log(`Server is running on http://0.0.0.0:${PORT}`);
-    await reload({fields: 'latitude,longitude,country,country_name,region1_name,city'})
+    await reload({fields: 'latitude,longitude,country,country_name,region1_name,city'});
 });
 
-const GOOGLE_MAPS_API_KEY="AIzaSyCAlshhT1DTtzc_dNYRlxGvl9c_NTJOZuU";
+const GOOGLE_MAPS_API_KEY="AIzaSyBAUG2bVy2pwNOnFxlji8Hb6oN5QRZFXLU";
 
 async function getCity(lat, lng) {
 
     // use google map reverse geocoding api
     try {
-        const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_API_KEY}&&result_type=locality`;
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_API_KEY}`;
         const response = await fetch(url);
         const data = await response.json();
-        // console.log(JSON.stringify(data, null, 2));
-        const city = data?.results[0]?.address_components[0]?.long_name;
-        // console.log('city', city);
-        return Promise.resolve(city);
+        console.log(JSON.stringify(data, null, 2));
+        for (const result of data.results) {
+            for (const component of result.address_components) {
+                if (component.types.includes('locality')) {
+                    var city = component.long_name;
+                    console.log('city (from Google Maps): ', city);
+                    return city;
+                }
+            }    
+        }
     } catch (error) {
         console.error('Error fetching location:', error);
-        return Promise.resolve("No city found");
+        return "Unknown";
     }
+
 }

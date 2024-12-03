@@ -47,7 +47,7 @@ app.get('/api/location/:ip', async (req, res) => {
 
 app.listen(PORT, async () => {
     console.log(`Server is running on http://0.0.0.0:${PORT}`);
-    console.log(GOOGLE_MAPS_API_KEY);
+    //console.log(GOOGLE_MAPS_API_KEY);
     await reload({fields: 'latitude,longitude,country,country_name,region1_name,city'});
 });
 

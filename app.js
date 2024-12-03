@@ -6,7 +6,7 @@ const PORT = 8087;
 import 'dotenv/config'
 
 const GOOGLE_MAPS_API_KEY=process.env.GOOGLE_MAPS_API_KEY ;
-
+const DEFAULT_LOCATION = { latitude: 40.730610, longitude: -73.935242, country: 'US', region1_name: 'Unknown', city: 'Unknown' };
 app.use((req, res, next) => {
     const { method, url } = req;
     const timestamp = new Date().toISOString();
@@ -29,14 +29,19 @@ app.get('/api/location/:ip', async (req, res) => {
     const ip = req.params.ip;
     try {
         const location = await lookup(ip);
-        console.log(JSON.stringify(location, null, 2));
-        if (location.city == undefined) {
-            location.city = await getCity(location.latitude, location.longitude);
+        // console.log(JSON.stringify(location, null, 2));
+        if (location == null || location.latitude == undefined || location.longitude == undefined) {
+            responseJson = DEFAULT_LOCATION;
+        } else {
+            if (location?.city == undefined) {
+                location.city = await getCity(location.latitude, location.longitude);
+            }
+            responseJson = location;
         }
-        responseJson = location;
     } catch (error) {
         console.error('Error fetching location:', error);
-        responseJson = { error: 'Error fetching location' };
+        responseJson = DEFAULT_LOCATION;
+
     } finally {
         var endTime = new Date();
         var responseTime = endTime - startTime;

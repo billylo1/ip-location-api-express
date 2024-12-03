@@ -64,7 +64,7 @@ async function getCity(lat, lng) {
         const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_API_KEY}`;
         const response = await fetch(url);
         const data = await response.json();
-        console.log(JSON.stringify(data, null, 2));
+        // console.log(JSON.stringify(data, null, 2));
         for (const result of data.results) {
             for (const component of result.address_components) {
                 if (component.types.includes('locality')) {

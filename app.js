@@ -22,6 +22,10 @@ app.use((req, res, next) => {
     next();
 });
 
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
+
 app.get('/api/location/:ip', async (req, res) => {
 
     var startTime = new Date();

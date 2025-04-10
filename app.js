@@ -2,7 +2,7 @@ import express, { response } from 'express';
 import { lookup, reload } from 'ip-location-api';
 
 const app = express();
-const PORT = 8087;
+const PORT = 8080;
 import 'dotenv/config'
 
 const GOOGLE_MAPS_API_KEY=process.env.GOOGLE_MAPS_API_KEY ;
